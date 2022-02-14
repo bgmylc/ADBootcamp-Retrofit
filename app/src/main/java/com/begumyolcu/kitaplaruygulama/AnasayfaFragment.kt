@@ -17,7 +17,8 @@ import retrofit2.Response
 
 class AnasayfaFragment : Fragment() {
     private lateinit var binding: FragmentAnasayfaBinding
-    var kitaplarList: ArrayList<Kitap> = arrayListOf()
+    private val viewModel by lazy { KitaplarViewModel() }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,32 +26,15 @@ class AnasayfaFragment : Fragment() {
     ): View? {
         binding = FragmentAnasayfaBinding.inflate(layoutInflater)
 
-        kitaplariGetir()
+        viewModel.kitaplarList.observe(viewLifecycleOwner) { kitaplar ->
+            val kitaplarAdapter = KitaplarAdapter(kitaplar as ArrayList<Kitap>)
+            binding.kitapRV.adapter = kitaplarAdapter
+        }
+        binding.kitapRV.layoutManager = GridLayoutManager(context, 2)
+        binding.kitapRV.setHasFixedSize(true)
+
         return binding.root
     }
 
-    private fun kitaplariGetir() {
-        ApiUtils.kitapDAOInterfaceGetir().kitaplariAl().enqueue(
-            object : Callback<KitaplarResponse>{
-                override fun onResponse(
-                    call: Call<KitaplarResponse>,
-                    response: Response<KitaplarResponse>
-                ) {
-                    val tempList = response.body()?.books
 
-                    tempList?.let {
-                        kitaplarList = it as ArrayList<Kitap>
-                    }
-                    println(kitaplarList)
-                    val kitaplarAdapter = KitaplarAdapter(kitaplarList)
-                    binding.kitapRV.adapter = kitaplarAdapter
-                    binding.kitapRV.layoutManager = GridLayoutManager(context, 2)
-                    binding.kitapRV.setHasFixedSize(true)
-                }
-
-                override fun onFailure(call: Call<KitaplarResponse>, t: Throwable) {}
-
-            }
-        )
-    }
 }
