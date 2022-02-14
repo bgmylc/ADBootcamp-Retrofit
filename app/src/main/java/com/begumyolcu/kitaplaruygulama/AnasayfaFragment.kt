@@ -26,7 +26,7 @@ class AnasayfaFragment : Fragment() {
     ): View? {
         binding = FragmentAnasayfaBinding.inflate(layoutInflater)
 
-        viewModel.kitaplarList.observe(viewLifecycleOwner) { kitaplar ->
+        viewModel.kitapList.observe(viewLifecycleOwner) { kitaplar ->
             val kitaplarAdapter = KitaplarAdapter(kitaplar as ArrayList<Kitap>)
             binding.kitapRV.adapter = kitaplarAdapter
         }
